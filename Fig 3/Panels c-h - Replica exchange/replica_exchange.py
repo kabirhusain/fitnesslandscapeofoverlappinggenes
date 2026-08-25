@@ -59,7 +59,7 @@ def make_temperature_grid(T_min=0.3, T_max=3.0, M1=10, M2=10):
 @njit
 def _run_mc_steps(Jvec1, hvec1, Jvec2, hvec2,
                   seq, aa_seq_1, aa_seq_2,
-                  T1, T2, n_steps, E1, E2):
+                  T1, T2, n_steps, E1, E2, ln_n):
     """Run *n_steps* of standard overlap MC at fixed (T1, T2).
 
     Mirrors the Metropolis logic of ``overlapped_sequence_generator_int``
@@ -70,10 +70,17 @@ def _run_mc_steps(Jvec1, hvec1, Jvec2, hvec2,
     seq : uint8 array – nucleotide sequence (modified in-place on accept)
     aa_seq_1, aa_seq_2 : int32 arrays – current AA translations (modified)
     E1, E2 : current energies for protein 1 and 2
+    ln_n : float64 array (21,) – ln of the codon count per amino acid, from
+        overlappingGenes.codon_degeneracy_ln_n.  Enters the acceptance only,
+        cancelling the codon-degeneracy bias of nucleotide-space sampling.
+        Pass zeros for the uncorrected sampler.
 
     Returns
     -------
     seq, aa_seq_1, aa_seq_2, E1, E2, n_accepted
+
+    Note that E1 and E2 remain the *original* DCA energies whatever ln_n is:
+    the degeneracy term is applied to the acceptance, never accumulated.
     """
     sequence_L = len(seq)
     len_seq_1_n = int(3 * len(hvec1) / 21 + 3)
@@ -150,6 +157,16 @@ def _run_mc_steps(Jvec1, hvec1, Jvec2, hvec2,
 
         # 5. Metropolis
         delta_H = delta_H_1 / T1 + delta_H_2 / T2
+
+        # Codon-degeneracy correction.  Equivalent to sampling with
+        # h -> h - T * ln n_codons, but with no factor of T: it cancels
+        # against the 1/T already dividing the energy difference.  aa_seq_*
+        # still holds the OLD residue here, since it is only updated on accept.
+        if aa_pos_1 != -1:
+            delta_H += ln_n[new_aa_1] - ln_n[aa_seq_1[aa_pos_1]]
+        if aa_pos_2 != -1:
+            delta_H += ln_n[new_aa_2] - ln_n[aa_seq_2[aa_pos_2]]
+
         accept = False
         if delta_H <= 0:
             accept = True
@@ -201,7 +218,7 @@ def _attempt_swap(E1_i, E2_i, E1_j, E2_j,
 _worker_state = {}
 
 
-def _init_worker(Jvec1, hvec1, Jvec2, hvec2):
+def _init_worker(Jvec1, hvec1, Jvec2, hvec2, ln_n):
     """Initializer run once in each worker process.
 
     Stores the (large) DCA parameter arrays so they are pickled only once
@@ -212,6 +229,7 @@ def _init_worker(Jvec1, hvec1, Jvec2, hvec2):
     _worker_state["hvec1"] = hvec1
     _worker_state["Jvec2"] = Jvec2
     _worker_state["hvec2"] = hvec2
+    _worker_state["ln_n"] = ln_n
     set_seed(os.getpid())
 
 
@@ -243,7 +261,8 @@ def _worker_init_replica(args):
 
     seq_int, aa1, aa2, E1, E2, _ = _run_mc_steps(
         Jvec1, hvec1, Jvec2, hvec2,
-        seq_int, aa1, aa2, T1, T2, N_equil, E1, E2)
+        seq_int, aa1, aa2, T1, T2, N_equil, E1, E2,
+        _worker_state["ln_n"])
 
     return seq_int, aa1, aa2, E1, E2
 
@@ -255,7 +274,8 @@ def _worker_mc(args):
     seq, aa1, aa2, E1, E2, nacc = _run_mc_steps(
         _worker_state["Jvec1"], _worker_state["hvec1"],
         _worker_state["Jvec2"], _worker_state["hvec2"],
-        seq, aa1, aa2, T1, T2, n_steps, E1, E2)
+        seq, aa1, aa2, T1, T2, n_steps, E1, E2,
+        _worker_state["ln_n"])
     return seq, aa1, aa2, E1, E2, nacc
 
 
@@ -268,7 +288,8 @@ def replica_exchange(DCA_params_1, DCA_params_2,
                      T1_values, T2_values,
                      N_swap=100, N_total=1_000_000,
                      N_equil=10_000, N_thin=100,
-                     discard_frac=0.2, n_workers=None, quiet=False):
+                     discard_frac=0.2, n_workers=None, quiet=False,
+                     ln_n=None):
     """2D replica-exchange Monte Carlo.
 
     Parameters
@@ -285,6 +306,12 @@ def replica_exchange(DCA_params_1, DCA_params_2,
     n_workers : int or None
         Number of parallel worker processes.  ``None`` (default) uses
         ``min(cpu_count, n_replicas)``.  Set to 1 to disable parallelism.
+    ln_n : array (21,) or None
+        Codon-degeneracy correction applied to the local MC acceptance, from
+        overlappingGenes.codon_degeneracy_ln_n.  ``None`` (default) means no
+        correction, reproducing the uncorrected sampler exactly.  The reported
+        E1/E2 are the original DCA energies either way, so the swap criterion
+        and every downstream z-score are unaffected.
 
     Returns
     -------
@@ -295,6 +322,9 @@ def replica_exchange(DCA_params_1, DCA_params_2,
     """
     Jvec1, hvec1 = DCA_params_1[0], DCA_params_1[1]
     Jvec2, hvec2 = DCA_params_2[0], DCA_params_2[1]
+
+    if ln_n is None:
+        ln_n = np.zeros(21, dtype=np.float64)
 
     M1 = len(T1_values)
     M2 = len(T2_values)
@@ -320,7 +350,7 @@ def replica_exchange(DCA_params_1, DCA_params_2,
         executor = ProcessPoolExecutor(
             max_workers=n_workers,
             initializer=_init_worker,
-            initargs=(Jvec1, hvec1, Jvec2, hvec2),
+            initargs=(Jvec1, hvec1, Jvec2, hvec2, ln_n),
         )
 
     try:
@@ -355,7 +385,7 @@ def replica_exchange(DCA_params_1, DCA_params_2,
                         Jvec1, hvec1, Jvec2, hvec2,
                         seq_int, aa1, aa2,
                         T1_values[a], T2_values[b],
-                        N_equil, E1, E2)
+                        N_equil, E1, E2, ln_n)
 
                     replicas[(a, b)] = (seq_int, aa1, aa2, E1, E2)
 
@@ -402,7 +432,7 @@ def replica_exchange(DCA_params_1, DCA_params_2,
                             Jvec1, hvec1, Jvec2, hvec2,
                             seq_int, aa1, aa2,
                             T1_values[a], T2_values[b],
-                            N_swap, E1, E2)
+                            N_swap, E1, E2, ln_n)
                         replicas[(a, b)] = (seq_int, aa1, aa2, E1, E2)
 
             step_counter += N_swap

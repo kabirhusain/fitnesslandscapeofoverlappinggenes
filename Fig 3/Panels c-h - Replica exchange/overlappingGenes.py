@@ -769,6 +769,37 @@ def set_genetic_code(new_table_dict, new_table_numeric):
         CODON_TABLE_INT[i, j, k] = ord(aa)
 
 
+def codon_degeneracy_ln_n():
+    """Natural log of the number of codons encoding each amino acid.
+
+    Sampling in nucleotide space proposes single nucleotide substitutions, so
+    its stationary distribution over amino acid sequences carries a codon
+    degeneracy factor P(a) ~ prod_i n_codons(a_i) * exp(-E(a)/T).  Subtracting
+    ln n_codons in the acceptance cancels it; equivalently h -> h - T*ln n,
+    which is why the term carries no factor of T once E/T is formed, and so
+    cancels identically on both sides of a replica swap.
+
+    Read from CODON_TABLE at call time, so a code installed by set_genetic_code
+    is picked up -- call this AFTER set_genetic_code, never before.
+
+    Returns:
+    - ln_n: float64 array of length 21, indexed by numeric amino acid.  State 0
+            ('-') stays 0.0; no codon encodes a gap.  Stops are excluded and
+            never reach this lookup.
+    """
+    ln_n = np.zeros(21, dtype=np.float64)
+
+    counts = {}
+    for aa in CODON_TABLE.values():
+        if aa != '*':
+            counts[aa] = counts.get(aa, 0) + 1
+
+    for aa, n in counts.items():
+        ln_n[_AA_CHAR_TO_INT[aa]] = np.log(n)
+
+    return ln_n
+
+
 @njit
 def seq_str_to_int_array(seq):
     arr = np.empty(len(seq), dtype=np.uint8)
@@ -840,7 +871,7 @@ def split_sequence_and_to_numeric_out(sequence, len_1_n, len_2_n, aa_out_1, aa_o
 
 # --- MODIFIED: Main simulation loop (Optimized) ---
 @njit
-def overlapped_sequence_generator_int(DCA_params_1, DCA_params_2, initialsequence, T1=1.0, T2=1.0, numberofiterations=100000, quiet=False, whentosave=0.1, nat_mean1=None, nat_mean2=None, std_mean1=None, std_mean2=None):
+def overlapped_sequence_generator_int(DCA_params_1, DCA_params_2, initialsequence, T1=1.0, T2=1.0, numberofiterations=100000, quiet=False, whentosave=0.1, nat_mean1=None, nat_mean2=None, std_mean1=None, std_mean2=None, ln_n=None):
     # Unpack params
     Jvec1, hvec1 = DCA_params_1[0], DCA_params_1[1]
     Jvec2, hvec2 = DCA_params_2[0], DCA_params_2[1]
@@ -978,6 +1009,18 @@ def overlapped_sequence_generator_int(DCA_params_1, DCA_params_2, initialsequenc
 
         # 5. Metropolis Step
         delta_H = (delta_H_1 / T1) + (delta_H_2 / T2)
+
+        # Codon-degeneracy correction.  Equivalent to sampling with
+        # h -> h - T * ln n_codons, but with no factor of T: it cancels
+        # against the 1/T already dividing the energy difference.  aa_seq_*
+        # still holds the OLD residue here, since it is only updated on accept.
+        # E1 and E2 keep accumulating delta_H_1 / delta_H_2, so the energies
+        # recorded below are always the original DCA energies.
+        if ln_n is not None:
+            if aa_pos_1 != -1:
+                delta_H += ln_n[new_aa_1] - ln_n[aa_seq_1[aa_pos_1]]
+            if aa_pos_2 != -1:
+                delta_H += ln_n[new_aa_2] - ln_n[aa_seq_2[aa_pos_2]]
 
         accept = False
         if delta_H <= 0:

@@ -1,0 +1,240 @@
+Processing PF00004 alignment...
+Number of positions is 1450
+Number of sequences is 242160
+
+Average position has 91.11255339872184 percent gaps
+Average sequence has 91.1125533987219 percent gaps
+Number of positions is 110
+Number of sequences is 242160
+
+Average position has 7.636720275099859 percent gaps
+Average sequence has 7.636720275099857 percent gaps
+Number of positions is 110
+Number of sequences is 214200
+
+Average position has 2.657995925642985 percent gaps
+Average sequence has 2.657995925642984 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00004-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00004-trimmed.fasta
+
+
+Processing PF00041 alignment...
+Number of positions is 792
+Number of sequences is 710516
+
+Average position has 88.58427316815305 percent gaps
+Average sequence has 88.58427316815303 percent gaps
+Number of positions is 74
+Number of sequences is 710516
+
+Average position has 3.8842136502850684 percent gaps
+Average sequence has 3.884213650285067 percent gaps
+Number of positions is 74
+Number of sequences is 702064
+
+Average position has 3.564757397954941 percent gaps
+Average sequence has 3.5647573979549403 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00041-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00041-trimmed.fasta
+
+
+Processing PF00072 alignment...
+Number of positions is 1135
+Number of sequences is 476282
+
+Average position has 90.10938157598002 percent gaps
+Average sequence has 90.10938157598005 percent gaps
+Number of positions is 108
+Number of sequences is 476282
+
+Average position has 2.1598529318220594 percent gaps
+Average sequence has 2.1598529318220594 percent gaps
+Number of positions is 108
+Number of sequences is 462979
+
+Average position has 1.278151724824252 percent gaps
+Average sequence has 1.2781517248242524 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00072-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00072-trimmed.fasta
+
+
+Processing PF00076 alignment...
+Number of positions is 776
+Number of sequences is 560354
+
+Average position has 91.33448672486821 percent gaps
+Average sequence has 91.33448672486821 percent gaps
+Number of positions is 59
+Number of sequences is 560354
+
+Average position has 5.58228838755259 percent gaps
+Average sequence has 5.58228838755259 percent gaps
+Number of positions is 59
+Number of sequences is 513254
+
+Average position has 2.8078739617672372 percent gaps
+Average sequence has 2.807873961767236 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00076-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00076-trimmed.fasta
+
+
+Processing PF00096 alignment...
+Number of positions is 93
+Number of sequences is 2008889
+
+Average position has 75.12416334418879 percent gaps
+Average sequence has 75.12416334418874 percent gaps
+Number of positions is 23
+Number of sequences is 2008889
+
+Average position has 1.0320002314928691 percent gaps
+Average sequence has 1.0320002314928685 percent gaps
+Number of positions is 23
+Number of sequences is 2004026
+
+Average position has 0.9745425935851999 percent gaps
+Average sequence has 0.9745425935852 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00096-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00096-trimmed.fasta
+
+
+Processing PF00153 alignment...
+Number of positions is 864
+Number of sequences is 314824
+
+Average position has 89.30449624822712 percent gaps
+Average sequence has 89.30449624822712 percent gaps
+Number of positions is 85
+Number of sequences is 314824
+
+Average position has 5.687809136309213 percent gaps
+Average sequence has 5.687809136309212 percent gaps
+Number of positions is 85
+Number of sequences is 284045
+
+Average position has 1.888478731104123 percent gaps
+Average sequence has 1.888478731104123 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00153-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00153-trimmed.fasta
+
+
+Processing PF00271 alignment...
+Number of positions is 1097
+Number of sequences is 370961
+
+Average position has 89.58042399211683 percent gaps
+Average sequence has 89.5804239921168 percent gaps
+Number of positions is 95
+Number of sequences is 370961
+
+Average position has 5.238209889846557 percent gaps
+Average sequence has 5.238209889846556 percent gaps
+Number of positions is 95
+Number of sequences is 326169
+
+Average position has 1.5725106019465853 percent gaps
+Average sequence has 1.5725106019465853 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00271-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00271-trimmed.fasta
+
+
+Processing PF00397 alignment...
+Number of positions is 73
+Number of sequences is 100367
+
+Average position has 59.050899636689515 percent gaps
+Average sequence has 59.05089963668952 percent gaps
+Number of positions is 28
+Number of sequences is 100367
+
+Average position has 1.1965372796123936 percent gaps
+Average sequence has 1.1965372796123939 percent gaps
+Number of positions is 28
+Number of sequences is 99876
+
+Average position has 1.0612445146267084 percent gaps
+Average sequence has 1.0612445146267087 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00397-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00397-trimmed.fasta
+
+
+Processing PF00512 alignment...
+Number of positions is 383
+Number of sequences is 232186
+
+Average position has 82.48965856782822 percent gaps
+Average sequence has 82.48965856782824 percent gaps
+Number of positions is 62
+Number of sequences is 232186
+
+Average position has 2.1064452498177912 percent gaps
+Average sequence has 2.106445249817791 percent gaps
+Number of positions is 62
+Number of sequences is 229722
+
+Average position has 1.7877428847378223 percent gaps
+Average sequence has 1.787742884737822 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00512-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00512-trimmed.fasta
+
+
+Processing PF00595 alignment...
+Number of positions is 590
+Number of sequences is 307863
+
+Average position has 86.30060245265379 percent gaps
+Average sequence has 86.30060245265379 percent gaps
+Number of positions is 71
+Number of sequences is 307863
+
+Average position has 4.156128894538008 percent gaps
+Average sequence has 4.156128894538009 percent gaps
+Number of positions is 71
+Number of sequences is 294145
+
+Average position has 2.8541207639520505 percent gaps
+Average sequence has 2.8541207639520505 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF00595-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF00595-trimmed.fasta
+
+
+Processing PF02518 alignment...
+Number of positions is 1109
+Number of sequences is 398282
+
+Average position has 89.76471687104409 percent gaps
+Average sequence has 89.7647168710441 percent gaps
+Number of positions is 101
+Number of sequences is 398282
+
+Average position has 4.348416548083921 percent gaps
+Average sequence has 4.348416548083921 percent gaps
+Number of positions is 101
+Number of sequences is 384348
+
+Average position has 3.393953932219223 percent gaps
+Average sequence has 3.393953932219223 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF02518-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF02518-trimmed.fasta
+
+
+Processing PF07679 alignment...
+Number of positions is 825
+Number of sequences is 614418
+
+Average position has 89.2979684050844 percent gaps
+Average sequence has 89.29796840508442 percent gaps
+Number of positions is 76
+Number of sequences is 614418
+
+Average position has 4.381157196086805 percent gaps
+Average sequence has 4.381157196086807 percent gaps
+Number of positions is 76
+Number of sequences is 592119
+
+Average position has 3.244044738162075 percent gaps
+Average sequence has 3.244044738162075 percent gaps
+FASTA file '../Data/Trimmed Alignments/PF07679-trimmed.fasta' has been created.
+Trimmed alignment saved to ../Data/Trimmed Alignments/PF07679-trimmed.fasta
+
+
